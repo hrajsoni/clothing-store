@@ -1,4 +1,6 @@
 import { ImageResponse } from 'next/og';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import Logo from '../layout/Logo';
 
 export type Props = {
@@ -8,10 +10,25 @@ export type Props = {
 export default async function OpengraphImage(props?: Props): Promise<ImageResponse> {
   const { title } = {
     ...{
-      title: process.env.SITE_NAME
+      title: process.env.SITE_NAME || 'Tokyo Talkies'
     },
     ...props
   };
+
+  let fonts: any[] = [];
+  try {
+    const fontData = readFileSync(join(process.cwd(), 'src/fonts/Inter-Bold.ttf'));
+    fonts = [
+      {
+        name: 'Inter',
+        data: fontData,
+        style: 'normal',
+        weight: 700
+      }
+    ];
+  } catch (e) {
+    console.warn('[OG Image] Could not load Inter-Bold.ttf, falling back to system font:', e);
+  }
 
   return new ImageResponse(
     (
@@ -25,16 +42,7 @@ export default async function OpengraphImage(props?: Props): Promise<ImageRespon
     {
       width: 1200,
       height: 630,
-      fonts: [
-        {
-          name: 'Inter',
-          data: await fetch(new URL('../../fonts/Inter-Bold.ttf', import.meta.url)).then((res) =>
-            res.arrayBuffer()
-          ),
-          style: 'normal',
-          weight: 700
-        }
-      ]
+      ...(fonts.length > 0 && { fonts })
     }
   );
 }
