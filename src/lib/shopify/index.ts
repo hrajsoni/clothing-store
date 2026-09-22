@@ -162,16 +162,17 @@ const reshapeImages = (images: Connection<Image>, productTitle: string) => {
   const flattened = removeEdgesAndNodes(images);
 
   return flattened.map((image) => {
-    const filename = image.url.match(/.*\/(.*)\..*/)[1];
+    const match = image?.url ? image.url.match(/.*\/(.*)\..*/) : null;
+    const filename = match?.[1] || 'image';
     return {
       ...image,
-      altText: image.altText || `${productTitle} - ${filename}`
+      altText: image?.altText || `${productTitle} - ${filename}`
     };
   });
 };
 
 const reshapeProduct = (product: ShopifyProduct, filterHiddenProducts: boolean = true) => {
-  if (!product || (filterHiddenProducts && product.tags.includes(HIDDEN_PRODUCT_TAG))) {
+  if (!product || (filterHiddenProducts && product.tags?.includes(HIDDEN_PRODUCT_TAG))) {
     return undefined;
   }
 

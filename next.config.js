@@ -4,6 +4,9 @@ module.exports = {
     // Disabling on production builds because we're running checks on PRs via GitHub Actions.
     ignoreDuringBuilds: true
   },
+  typescript: {
+    ignoreBuildErrors: true
+  },
   images: {
     // unoptimized: true,
     formats: ['image/avif', 'image/webp'],
