@@ -1,0 +1,27 @@
+[
+  {
+    "title": "X",
+    "url": "https://twitter.com/hrajsoni",
+    "image": "/images/footer/social-media/x.png"
+  },
+  {
+    "title": "LinkedIn",
+    "url": "https://www.linkedin.com/in/harshitrajsoni/",
+    "image": "/images/footer/social-media/facebook.png"
+  },
+  {
+    "title": "Instagram",
+    "url": "https://www.instagram.com/hraj.soni/",
+    "image": "/images/footer/social-media/instagram.png"
+  },
+  {
+    "title": "GitHub",
+    "url": "https://github.com/hrajsoni",
+    "image": "/images/footer/social-media/youtube.png"
+  },
+  {
+    "title": "Contact",
+    "url": "mailto:hraj491@gmail.com",
+    "image": "/images/footer/social-media/tiktok.png"
+  }
+]
