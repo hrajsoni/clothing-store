@@ -23,8 +23,6 @@ const AboutUs = dynamic(() => import('@/components/sections/AboutUs'), {
   loading
 });
 
-export const runtime = 'edge';
-
 export const metadata = {
   description: 'Clothing store e-commerce website by Harshit Raj',
   keywords: ['tokyo talkies', 'clothing', 'store', 'clothing store', 'e-commerce', 'harshit raj'],
