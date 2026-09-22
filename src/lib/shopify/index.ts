@@ -70,7 +70,14 @@ export async function shopifyFetch<T>({
   query: string;
   tags?: string[];
   variables?: ExtractVariables<T>;
-}): Promise<{ status: number; body: T } | never> {
+}): Promise<{ status: number; body: T }> {
+  if (!domain || !key) {
+    return {
+      status: 200,
+      body: { data: {} } as unknown as T
+    };
+  }
+
   try {
     const result = await fetch(endpoint, {
       method: 'POST',
@@ -98,24 +105,16 @@ export async function shopifyFetch<T>({
       body
     };
   } catch (e) {
-    if (isShopifyError(e)) {
-      throw {
-        cause: e.cause?.toString() || 'unknown',
-        status: e.status || 500,
-        message: e.message,
-        query
-      };
-    }
-
-    throw {
-      error: e,
-      query
+    console.warn('[Shopify] Fetch warning:', e);
+    return {
+      status: 500,
+      body: { data: {} } as unknown as T
     };
   }
 }
 
-const removeEdgesAndNodes = (array: Connection<any>) => {
-  return array.edges.map((edge) => edge?.node);
+const removeEdgesAndNodes = (array: Connection<any> | undefined) => {
+  return array?.edges ? array.edges.map((edge) => edge?.node) : [];
 };
 
 const reshapeCart = (cart: ShopifyCart): Cart => {
@@ -372,7 +371,7 @@ export async function getPage(handle: string): Promise<Page> {
     variables: { handle }
   });
 
-  return res.body.data.pageByHandle;
+  return res.body?.data?.pageByHandle;
 }
 
 export async function getPages(): Promise<Page[]> {
@@ -380,7 +379,7 @@ export async function getPages(): Promise<Page[]> {
     query: getPagesQuery
   });
 
-  return removeEdgesAndNodes(res.body.data.pages);
+  return removeEdgesAndNodes(res.body?.data?.pages);
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
@@ -392,7 +391,7 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
     }
   });
 
-  return reshapeProduct(res.body.data.product, false);
+  return res.body?.data?.product ? reshapeProduct(res.body.data.product, false) : undefined;
 }
 
 export async function getProductRecommendations(productId: string, first = 3): Promise<Product[]> {
@@ -404,7 +403,9 @@ export async function getProductRecommendations(productId: string, first = 3): P
     }
   });
 
-  return reshapeProducts(res.body.data.productRecommendations.slice(0, first));
+  return res.body?.data?.productRecommendations
+    ? reshapeProducts(res.body.data.productRecommendations.slice(0, first))
+    : [];
 }
 
 export async function getProducts({
@@ -429,7 +430,7 @@ export async function getProducts({
     }
   });
 
-  return reshapeProducts(removeEdgesAndNodes(res.body.data.products));
+  return reshapeProducts(removeEdgesAndNodes(res.body?.data?.products));
 }
 
 // This is called from `app/api/revalidate.ts` so providers can control revalidation logic.

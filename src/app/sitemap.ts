@@ -14,12 +14,16 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
   : 'http://localhost:3000';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  validateEnvironmentVariables();
+  const hasEnv = validateEnvironmentVariables();
 
   const routesMap = [''].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date().toISOString()
   }));
+
+  if (!hasEnv) {
+    return routesMap;
+  }
 
   const collectionsPromise = getCollections().then((collections) =>
     collections.map((collection) => ({
